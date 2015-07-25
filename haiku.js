@@ -23,7 +23,7 @@ fs.readFile('cmudict.txt', function(err, data){
 	})
 
 	var lineGenerator = function(totalSyllables){
-		var chosenSylNum = Math.floor(Math.random() * (totalSyllables - 1) + 1);
+		var chosenSylNum = Math.floor(Math.random() * (totalSyllables) + 1);
 		var choiceOptions = arr.filter(function(el){return el.syllableCount === chosenSylNum;});
 		var chosenWord = choiceOptions[Math.floor(Math.random() * choiceOptions.length)].word;
 		if(totalSyllables - chosenSylNum === 0){
