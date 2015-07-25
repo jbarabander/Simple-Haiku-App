@@ -24,18 +24,33 @@ fs.readFile('cmudict.txt', function(err, data){
 		wordObj.stressPattern = stressPattern;
 		arr.push(wordObj);
 	})
+
 	function lineGenerator(totalSyllables){
-		var chosenSylNum = Math.floor(Math.random() * (totalSyllables) + 1);
-		var choiceOptions = arr.filter(function(el){return el.syllableCount === chosenSylNum;});
-		var chosenWord = choiceOptions[Math.floor(Math.random() * choiceOptions.length)].word;
-		if(totalSyllables - chosenSylNum === 0){
-			return chosenWord;
+	var stressForm = [];
+	for (var i = 0; i < totalSyllables; i++){
+		if(i % 2 === 0){
+			stressForm[i] = 0;
 		}
 		else {
-			return chosenWord + ' ' + lineGenerator(totalSyllables - chosenSylNum);
+			stressForm[i] = '\[1\-2\]';
 		}
 	}
+		function recGenerator(numSyllables){
+			var chosenSylNum = Math.floor(Math.random() * (numSyllables) + 1);
+			var stressPattern = stressForm.slice(0, chosenSylNum).join('');
+			stressForm = stressForm.slice(chosenSylNum);
+			var choiceOptions = arr.filter(function(el){return el.stressPattern.search(RegExp('\^' + stressPattern + '\$')) !== -1;});
+			var chosenWord = choiceOptions[Math.floor(Math.random() * choiceOptions.length)].word;
+			if(numSyllables - chosenSylNum === 0){
+				return chosenWord;
+			}
+			else {
+				return chosenWord + ' ' + recGenerator(numSyllables - chosenSylNum);
+			}
 
+		}
+		return recGenerator(totalSyllables); 
+}
 	console.log(lineGenerator(5) + ',\n' + lineGenerator(7) + ',\n' + lineGenerator(5));
 
 	// var syl5Arr = arr.filter(function(el){return el.syllableCount === 5;});
@@ -45,3 +60,4 @@ fs.readFile('cmudict.txt', function(err, data){
 	// var line3 = syl5Arr[Math.floor(Math.random() * syl5Arr.length)].word;
 	// console.log(line1 + ',\n' + line2 + ',\n' + line3);
 })
+
